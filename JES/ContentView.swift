@@ -163,8 +163,9 @@ struct ContentView: View {
                         .frame(height: 300)
                         .background(Color.white)
                         .cornerRadius(10)
+                        .overlay(JapaneseWritingGrid().allowsHitTesting(false))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.3), lineWidth: 1))
                         .padding()
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.white, lineWidth: 2))
                     // Export Button (saves as PNG)
                     Button("Export as PNG") {
                         let bounds = handwritingDrawing.bounds.insetBy(dx: -10, dy: -10)

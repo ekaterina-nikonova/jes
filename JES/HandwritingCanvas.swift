@@ -39,6 +39,36 @@ struct HandwritingCanvas: UIViewRepresentable {
     }
 }
 
+struct JapaneseWritingGrid: View {
+    let cellSize: CGFloat = 75
+
+    var body: some View {
+        GeometryReader { geo in
+            let w = geo.size.width
+            let h = geo.size.height
+
+            Path { path in
+                // Vertical lines
+                var x = cellSize
+                while x < w {
+                    path.move(to: CGPoint(x: x, y: 0))
+                    path.addLine(to: CGPoint(x: x, y: h))
+                    x += cellSize
+                }
+                // Horizontal lines
+                var y = cellSize
+                while y < h {
+                    path.move(to: CGPoint(x: 0, y: y))
+                    path.addLine(to: CGPoint(x: w, y: y))
+                    y += cellSize
+                }
+            }
+            .stroke(Color.gray.opacity(0.12), lineWidth: 0.5)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+}
+
 @discardableResult
 func saveHandwritingImage(_ image: UIImage) -> URL? {
     guard let pngData = image.pngData() else {
