@@ -12,11 +12,12 @@ struct GenerateResponse: Codable {
 func sendTopic(_ topic: String,
                baseURL: String,
                completion: @escaping (Result<GenerateResponse, Error>) -> Void) {
-    guard let url = URL(string: "\(baseURL)/generate-test") else {
+    guard let url = URL(string: "\(baseURL)/generate") else {
         return
     }
 
     var request = URLRequest(url: url)
+    request.timeoutInterval = 300
     request.httpMethod = "POST"
     request.setValue("application/json; charset=utf-8",
                      forHTTPHeaderField: "Content-Type")
@@ -118,18 +119,19 @@ func submitAnswer(text: String,
 
     var multipart = MultipartFormData()
     multipart.addField(name: "text", value: text)
-    multipart.addField(name: "question", value: question)
-    multipart.addFileField(name: "handwriting",
+    multipart.addField(name: "selected_question", value: question)
+    multipart.addFileField(name: "handwritten",
                            filename: "handwriting.png",
                            mimeType: "image/png",
                            fileData: pngData)
-    multipart.addFileField(name: "audio",
+    multipart.addFileField(name: "spoken",
                            filename: "handwriting.wav",
                            mimeType: "audio/wav",
                            fileData: wavData)
     multipart.finalize()
 
     var request = URLRequest(url: url)
+    request.timeoutInterval = 300
     request.httpMethod = "POST"
     request.setValue("multipart/form-data; boundary=\(multipart.boundary)",
                      forHTTPHeaderField: "Content-Type")
