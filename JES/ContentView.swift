@@ -47,27 +47,29 @@ struct ContentView: View {
         ScrollView {
             VStack {
                 Text("Japanese Language 🇯🇵 Exercise System")
-                    .font(.title)
+                    .font(.system(size: 36, weight: .bold))
 
                 // Server configuration
                 Text("Provide the IP address and the port of the local web server")
-                    .font(.subheadline)
+                    .font(.system(size: 20))
                     .foregroundStyle(.secondary)
                     .padding(.top, 8)
 
                 HStack {
                     TextField("IP address", text: $ipField)
+                        .font(.system(size: 22))
                         .textFieldStyle(.roundedBorder)
                         .keyboardType(.decimalPad)
 
                     TextField("Port", text: $portField)
+                        .font(.system(size: 22))
                         .textFieldStyle(.roundedBorder)
                         .keyboardType(.numberPad)
-                        .frame(width: 80)
+                        .frame(width: 100)
 
                     if showSavedConfirmation {
                         Text("Saved")
-                            .font(.footnote)
+                            .font(.system(size: 18))
                             .foregroundStyle(.green)
                             .transition(.opacity)
                     } else {
@@ -79,6 +81,7 @@ struct ContentView: View {
                                 withAnimation { showSavedConfirmation = false }
                             }
                         }
+                        .font(.system(size: 22))
                         .buttonStyle(.bordered)
                         .disabled(
                             ipField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
@@ -89,11 +92,12 @@ struct ContentView: View {
                 .padding(.horizontal)
 
                 Text("Type in a topic for the exercise:")
-                    .font(.headline)
+                    .font(.system(size: 26, weight: .semibold))
                     .opacity(isServerConfigured ? 1 : 0.4)
 
                 HStack {
                     TextField("日本語を使ってください。", text: $topicText)
+                        .font(.system(size: 22))
                         .textFieldStyle(.roundedBorder)
                         .submitLabel(.send)
 
@@ -117,6 +121,7 @@ struct ContentView: View {
                             }
                         }
                     }
+                    .font(.system(size: 22))
                     .buttonStyle(.borderedProminent)
                     .disabled(!isServerConfigured || topicText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isLoadingTopic)
                 }
@@ -132,25 +137,25 @@ struct ContentView: View {
                 if let error = topicErrorMessage {
                     Text("Error: \(error)")
                         .foregroundColor(.red)
-                        .font(.footnote)
+                        .font(.system(size: 18))
                         .padding(.top, 4)
                 }
 
                 if !generatedText.isEmpty {
                     Text("Generated text:")
-                        .font(.headline)
+                        .font(.system(size: 26, weight: .semibold))
                         .padding(.top, 12)
 
                     ScrollView {
                         // Try to parse Markdown; fall back to plain text if it fails
                         if let attributed = try? AttributedString(markdown: generatedText) {
                             Text(attributed)
-                                .font(.body)
+                                .font(.system(size: 24))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding()
                         } else {
                             Text(generatedText)
-                                .font(.body)
+                                .font(.system(size: 24))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding()
                         }
@@ -162,7 +167,7 @@ struct ContentView: View {
 
                 if !generatedQuestions.isEmpty {
                     Text("Questions:")
-                        .font(.headline)
+                        .font(.system(size: 26, weight: .semibold))
                         .padding(.top, 8)
 
                     VStack(alignment: .leading, spacing: 6) {
@@ -174,13 +179,16 @@ struct ContentView: View {
                             } label: {
                                 HStack(alignment: .top, spacing: 8) {
                                     Text("•")
+                                        .font(.system(size: 24))
 
                                     // Markdown rendering for the question
                                     if let attributed = try? AttributedString(markdown: question) {
                                         Text(attributed)
+                                            .font(.system(size: 24))
                                             .multilineTextAlignment(.leading)
                                     } else {
                                         Text(question)
+                                            .font(.system(size: 24))
                                             .multilineTextAlignment(.leading)
                                     }
                                 }
@@ -201,7 +209,7 @@ struct ContentView: View {
 
                 if (selectedQuestionIndex != nil) {
                     Text("Write the answer below:")
-                        .font(.headline)
+                        .font(.system(size: 26, weight: .semibold))
 
                     HandwritingCanvas(drawing: $handwritingDrawing)
                         .frame(height: 300)
@@ -228,6 +236,7 @@ struct ContentView: View {
                             print("No strokes to export")
                         }
                     }
+                    .font(.system(size: 22))
                     .buttonStyle(.borderedProminent)
                     .disabled(handwritingDrawing.strokes.isEmpty)
 
@@ -235,10 +244,11 @@ struct ContentView: View {
                     Button("Clear") {
                         handwritingDrawing = PKDrawing()
                     }
+                    .font(.system(size: 22))
 
                     // Audio recording section
                     Text("Record your spoken answer:")
-                        .font(.headline)
+                        .font(.system(size: 26, weight: .semibold))
                         .padding(.top)
 
 
@@ -250,6 +260,7 @@ struct ContentView: View {
                                 audioRecorder.startRecording()
                             }
                         }
+                        .font(.system(size: 22))
                         .buttonStyle(.borderedProminent)
 
                         Button("Export WAV") {
@@ -260,6 +271,7 @@ struct ContentView: View {
                                 print("No recording to export")
                             }
                         }
+                        .font(.system(size: 22))
                         .buttonStyle(.bordered)
                         .disabled(audioRecorder.recordedFileURL == nil)
                     }
@@ -297,6 +309,7 @@ struct ContentView: View {
                                 }
                             }
                         }
+                        .font(.system(size: 22))
                         .buttonStyle(.borderedProminent)
                         .padding(.top)
                         .disabled(isSubmittingAnswer || imageToShareURL == nil || audioRecorder.recordedFileURL == nil)
@@ -308,28 +321,29 @@ struct ContentView: View {
                         if let msg = submitErrorMessage {
                             Text("Submit error: \(msg)")
                                 .foregroundColor(.red)
-                                .font(.footnote)
+                                .font(.system(size: 18))
                                 .padding(.top, 4)
                         }
                         if let msg = submitSuccessMessage {
                             Text(msg)
                                 .foregroundColor(.green)
-                                .font(.footnote)
+                                .font(.system(size: 18))
                                 .padding(.top, 4)
                         }
 
                         // Display feedback
                         if let feedback = submitFeedback {
                             Text("Feedback:")
-                                .font(.headline)
+                                .font(.system(size: 26, weight: .semibold))
                                 .padding(.top, 8)
 
                             ScrollView {
                                 Text(feedback)
+                                    .font(.system(size: 24))
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding()
                             }
-                            .frame(minHeight: 120, maxHeight: 200)
+                            .frame(minHeight: 150, maxHeight: 250)
                             .background(Color(.systemGray6))
                             .cornerRadius(8)
                         }
