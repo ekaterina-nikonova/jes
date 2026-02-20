@@ -350,6 +350,31 @@ struct ContentView: View {
                     }
 
                 }
+
+                Button("Reset") {
+                    handwritingDrawing = PKDrawing()
+                    previewImage = nil
+                    topicText = ""
+                    imageToShareURL = nil
+                    isShowingShareSheet = false
+                    audioToShareURL = nil
+                    isShowingAudioShareSheet = false
+                    generatedText = ""
+                    generatedQuestions = []
+                    selectedQuestionIndex = nil
+                    isLoadingTopic = false
+                    topicErrorMessage = nil
+                    isSubmittingAnswer = false
+                    submitErrorMessage = nil
+                    submitSuccessMessage = nil
+                    submitFeedback = nil
+                    audioRecorder.stopRecording()
+                    audioRecorder.recordedFileURL = nil
+                }
+                .font(.system(size: 22))
+                .buttonStyle(.bordered)
+                .foregroundStyle(.red)
+                .padding(.top, 24)
             }
             .padding()
             .sheet(isPresented: $isShowingShareSheet) {
