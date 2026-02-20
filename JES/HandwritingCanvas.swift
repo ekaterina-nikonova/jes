@@ -23,7 +23,7 @@ struct HandwritingCanvas: UIViewRepresentable {
 
     func makeUIView(context: Context) -> PKCanvasView {
         let canvas = PKCanvasView()
-        canvas.drawingPolicy = .anyInput
+        canvas.drawingPolicy = .pencilOnly
         canvas.tool = PKInkingTool(.pen,
                                    color: UIColor.systemIndigo,
                                    width: 3.0)
