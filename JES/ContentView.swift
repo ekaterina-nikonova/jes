@@ -27,6 +27,7 @@ struct ContentView: View {
     @State private var ipField: String = ""
     @State private var portField: String = ""
     @State private var showSavedConfirmation = false
+    @State private var isServerConfigExpanded = true
 
     private var isServerConfigured: Bool {
         !savedIP.isEmpty && !savedPort.isEmpty
@@ -50,45 +51,57 @@ struct ContentView: View {
                     .font(.system(size: 36, weight: .bold))
 
                 // Server configuration
-                Text("Provide the IP address and the port of the local web server")
-                    .font(.system(size: 20))
-                    .foregroundStyle(.secondary)
-                    .padding(.top, 8)
+                DisclosureGroup(isExpanded: $isServerConfigExpanded) {
+                    Text("Provide the IP address and the port of the local web server")
+                        .font(.system(size: 20))
+                        .foregroundStyle(.secondary)
+                        .padding(.top, 4)
 
-                HStack {
-                    TextField("IP address", text: $ipField)
-                        .font(.system(size: 22))
-                        .textFieldStyle(.roundedBorder)
-                        .keyboardType(.decimalPad)
+                    HStack {
+                        TextField("IP address", text: $ipField)
+                            .font(.system(size: 22))
+                            .textFieldStyle(.roundedBorder)
+                            .keyboardType(.decimalPad)
 
-                    TextField("Port", text: $portField)
-                        .font(.system(size: 22))
-                        .textFieldStyle(.roundedBorder)
-                        .keyboardType(.numberPad)
-                        .frame(width: 100)
+                        TextField("Port", text: $portField)
+                            .font(.system(size: 22))
+                            .textFieldStyle(.roundedBorder)
+                            .keyboardType(.numberPad)
+                            .frame(width: 100)
 
-                    if showSavedConfirmation {
-                        Text("Saved")
-                            .font(.system(size: 18))
-                            .foregroundStyle(.green)
-                            .transition(.opacity)
-                    } else {
-                        Button("Save") {
-                            savedIP = ipField.trimmingCharacters(in: .whitespacesAndNewlines)
-                            savedPort = portField.trimmingCharacters(in: .whitespacesAndNewlines)
-                            withAnimation { showSavedConfirmation = true }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                withAnimation { showSavedConfirmation = false }
+                        if showSavedConfirmation {
+                            Text("Saved")
+                                .font(.system(size: 18))
+                                .foregroundStyle(.green)
+                                .transition(.opacity)
+                        } else {
+                            Button("Save") {
+                                savedIP = ipField.trimmingCharacters(in: .whitespacesAndNewlines)
+                                savedPort = portField.trimmingCharacters(in: .whitespacesAndNewlines)
+                                withAnimation { showSavedConfirmation = true }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                    withAnimation { showSavedConfirmation = false }
+                                }
                             }
+                            .font(.system(size: 22))
+                            .buttonStyle(.bordered)
+                            .disabled(
+                                ipField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                                portField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                            )
                         }
-                        .font(.system(size: 22))
-                        .buttonStyle(.bordered)
-                        .disabled(
-                            ipField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-                            portField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                        )
+                    }
+                } label: {
+                    if isServerConfigured {
+                        Text("Server: \(savedIP):\(savedPort)")
+                            .font(.system(size: 20))
+                    } else {
+                        Text("Server: not configured")
+                            .font(.system(size: 20))
+                            .foregroundStyle(.red)
                     }
                 }
+                .font(.system(size: 20))
                 .padding(.horizontal)
 
                 Text("Type in a topic for the exercise:")
