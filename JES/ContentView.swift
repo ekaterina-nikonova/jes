@@ -2,15 +2,6 @@ import SwiftUI
 import PencilKit
 
 struct ContentView: View {
-    @State private var cannedText: String = "今日は母の誕生日です。誕生日、おめでとうございます。お母さんは四十五歳ぐらいの歳です。家族といるとしあわせです。母が来ました。ただいま。昨日母に電話しました。お母さんから手紙が来ました。けいたいでしゃしんをとります。あたらし いけいたいはおおきいです。けいたいででんわをします。家族と一緒にいます。来週、母の誕生日パーティーがあります。こうがいでさんぽします。こうがいはとおいけど、たのしいです。お母さんが作ったとろとろのオムライスを食べました。おべんとうを一 つください。おべんとう、あたためましょうか。おさけはあまいです。くすりはにがいです。お母さんは何もしませんでした。今日はさいあくの日でした。今日はダメじゃないです。せいせきがいいので、うれしいです。小さいとき、お母さんはしんせつでした 。あたらしいゆびわをあげます。お母さんはうれしそうです。姉はえいごがとくいです。姉が一人います。先週の誕生日に、姉がおごりでケーキを買いました。姉はえをかくのが上手です。えをかくのはたのしいです。七日は私の誕生日です。二十日は友達の誕 生日です。九日は友達の誕生日です。昨日は友達の誕生日でした。お母さんはおいくつですか。四十五歳です。おおみそかは家族と一緒にいます。かいしゃにいくまえに、でんきをあけます。すわります。おこりました。今日は手がベタベタです。じこはきらい です。かわいいみみがあります。うさぎを愛します。しんぷはしんせつなので、みんながすきです。しんぷはしんせつです。あたまがいいです。やっつ の子供がいます。あかちゃんのとき、よくねました。きれいなけっこんしきでした。しょうしょうおまちください。ゆびわをあげます。今日、よやくを入れます。こわれます。へんにちは休みです。お母さんはいつも優しいです。家族みんなでお祝いします。お母さん、ありがとうございます。"
-
-    @State private var cannedGeneratedQuestions: [String] = [
-        "今日は**お母さん**の**誕生日**ですか。",
-        "お母さん は**何歳**ぐらいですか。",
-        "**姉**は何が**とくい**ですか。",
-        "**七日**は**誰**の**誕生日**ですか。"
-    ]
-
     @State private var handwritingDrawing = PKDrawing()
     @State private var previewImage: UIImage?
     @State private var topicText: String = ""
@@ -114,9 +105,6 @@ struct ContentView: View {
                         topicErrorMessage = nil
                         generatedText = ""
                         generatedQuestions = []
-
-                        generatedText = cannedText
-                        generatedQuestions = cannedGeneratedQuestions
 
                         sendTopic(trimmed, baseURL: serverBaseURL) { result in
                             isLoadingTopic = false
