@@ -30,6 +30,21 @@ struct ContentView: View {
     @State private var isLoadingTopic = false
     @State private var topicErrorMessage: String? = nil
 
+    // Server configuration
+    @AppStorage("serverIP") private var savedIP: String = ""
+    @AppStorage("serverPort") private var savedPort: String = ""
+    @State private var ipField: String = ""
+    @State private var portField: String = ""
+    @State private var showSavedConfirmation = false
+
+    private var isServerConfigured: Bool {
+        !savedIP.isEmpty && !savedPort.isEmpty
+    }
+
+    private var serverBaseURL: String {
+        "http://\(savedIP):\(savedPort)"
+    }
+
     // Submit answer
     @State private var isSubmittingAnswer = false
     @State private var submitErrorMessage: String? = nil
@@ -43,9 +58,48 @@ struct ContentView: View {
                 Text("Japanese Language 🇯🇵 Exercise System")
                     .font(.title)
 
+                // Server configuration
+                Text("Provide the IP address and the port of the local web server")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .padding(.top, 8)
+
+                HStack {
+                    TextField("IP address", text: $ipField)
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.decimalPad)
+
+                    TextField("Port", text: $portField)
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.numberPad)
+                        .frame(width: 80)
+
+                    if showSavedConfirmation {
+                        Text("Saved")
+                            .font(.footnote)
+                            .foregroundStyle(.green)
+                            .transition(.opacity)
+                    } else {
+                        Button("Save") {
+                            savedIP = ipField.trimmingCharacters(in: .whitespacesAndNewlines)
+                            savedPort = portField.trimmingCharacters(in: .whitespacesAndNewlines)
+                            withAnimation { showSavedConfirmation = true }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                withAnimation { showSavedConfirmation = false }
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(
+                            ipField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                            portField.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        )
+                    }
+                }
+                .padding(.horizontal)
 
                 Text("Type in a topic for the exercise:")
                     .font(.headline)
+                    .opacity(isServerConfigured ? 1 : 0.4)
 
                 HStack {
                     TextField("日本語を使ってください。", text: $topicText)
@@ -64,7 +118,7 @@ struct ContentView: View {
                         generatedText = cannedText
                         generatedQuestions = cannedGeneratedQuestions
 
-                        sendTopic(trimmed) { result in
+                        sendTopic(trimmed, baseURL: serverBaseURL) { result in
                             isLoadingTopic = false
                             switch result {
                             case .success(let response):
@@ -76,9 +130,11 @@ struct ContentView: View {
                         }
                     }
                     .buttonStyle(.borderedProminent)
-                    .disabled(topicText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isLoadingTopic)
+                    .disabled(!isServerConfigured || topicText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isLoadingTopic)
                 }
                 .padding(.horizontal)
+                .disabled(!isServerConfigured)
+                .opacity(isServerConfigured ? 1 : 0.4)
 
                 if isLoadingTopic {
                     ProgressView("Generating exercise...")
@@ -241,7 +297,8 @@ struct ContentView: View {
                             submitAnswer(text: generatedText,
                                          question: question,
                                          handwritingPNGURL: pngURL,
-                                         audioWAVURL: wavURL) { result in
+                                         audioWAVURL: wavURL,
+                                         baseURL: serverBaseURL) { result in
                                 isSubmittingAnswer = false
                                 switch result {
                                 case .success(let feedbackText):
@@ -302,6 +359,10 @@ struct ContentView: View {
                 if let url = audioToShareURL {
                     ShareSheet(items: [url])   // handwriting.wav
                 }
+            }
+            .onAppear {
+                ipField = savedIP
+                portField = savedPort
             }
         }
     }

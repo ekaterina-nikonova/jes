@@ -10,8 +10,9 @@ struct GenerateResponse: Codable {
 }
 
 func sendTopic(_ topic: String,
+               baseURL: String,
                completion: @escaping (Result<GenerateResponse, Error>) -> Void) {
-    guard let url = URL(string: "http://192.168.84.40:8000/generate-test") else {
+    guard let url = URL(string: "\(baseURL)/generate-test") else {
         return
     }
 
@@ -99,8 +100,9 @@ func submitAnswer(text: String,
                   question: String,
                   handwritingPNGURL: URL,
                   audioWAVURL: URL,
+                  baseURL: String,
                   completion: @escaping (Result<String, Error>) -> Void) {
-    guard let url = URL(string: "http://192.168.84.40:8000/submit-answer") else {
+    guard let url = URL(string: "\(baseURL)/submit-answer") else {
         return
     }
 
